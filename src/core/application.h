@@ -5,6 +5,8 @@
 
 #include "../ui/mainwindow.h"
 
+#include "global.h"
+
 class Application : public QApplication
 {
     Q_OBJECT
@@ -15,6 +17,8 @@ public:
 
 private:
     MainWindow* mainWindow;
+
+    GLManager* glMgr;
 };
 
 #endif // APPLICATION_H

@@ -1,17 +1,19 @@
 #include "graphicswindow.h"
 
-#include <QDebug>
+#include "../core/global.h"
 
-GraphicsWindow::GraphicsWindow()
-: GLWindow()
-, mainView(NULL)
+#include <QDebug>
+#include <QMouseEvent>
+
+
+GraphicsWindow::GraphicsWindow(QWindow* parent)
+: GLWindow(this, GLMgr->context(), GLWindow::NoPartialUpdate, parent)
 {
 }
 
-GraphicsWindow::GraphicsWindow(GraphicsWindow* view)
-: GLWindow(view->context())
+GraphicsWindow::GraphicsWindow(GraphicsWindow* view, QWindow* parent)
+: GLWindow(this, GLMgr->context(), GLWindow::NoPartialUpdate, parent)
 , mainView(view)
-, triangle(NULL)
 {
 
 }
@@ -23,6 +25,8 @@ GraphicsWindow::~GraphicsWindow()
 
 void GraphicsWindow::initialize()
 {
+    initializeOpenGLFunctions();
+
     glEnable(GL_CULL_FACE);
 
     mvp.perspective(60.0f, (float)width() / (float)height(), 0.1f, 100.0f);
@@ -30,7 +34,7 @@ void GraphicsWindow::initialize()
     if(!mainView)
     {
         triangle = new Triangle(this);
-        triangle->Initialize();
+        triangle->Initialize(this);
 
         mvp.translate(0, 0, -2);
         mvp.rotate(30.0f, 0, 1, 0);
@@ -44,18 +48,16 @@ void GraphicsWindow::initialize()
 
 void GraphicsWindow::render()
 {
-    if(mainView)
-    {
-        Triangle* triangle = mainView->getTriangle();
-        triangle->Draw(mvp);
+    GraphicsWindow* window = mainView ? mainView : this;
 
-        return;
-    }
-
-    triangle->Draw(mvp);
+    window->triangle->Draw(mvp, mainView ? true : false);
 }
 
 void GraphicsWindow::mouseMoveEvent(QMouseEvent* event)
 {
+    QPoint diff = lastPos - event->pos();
 
+    mvp.rotate(diff.x() * -1, 0, 1, 0);
+
+    lastPos = event->pos();
 }

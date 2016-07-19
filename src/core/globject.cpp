@@ -11,12 +11,13 @@ GLObject::~GLObject()
     delete shader;
 }
 
-void GLObject::Initialize()
+void GLObject::Initialize(QOpenGLFunctions_4_5_Core* glFunctions)
 {
-
+    functions = glFunctions;
 }
 
 void GLObject::Draw(const QMatrix4x4& mvp)
 {
     Q_UNUSED(mvp);
+    Q_UNUSED(copy);
 }

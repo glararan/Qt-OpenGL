@@ -10,6 +10,17 @@ Application::Application(int argc, char** argv)
     setOrganizationDomain("http://veteska.cz");
     setOrganizationName("Veteška");
 
+    QSurfaceFormat format;
+    format.setRenderableType(QSurfaceFormat::OpenGL);
+    format.setProfile(QSurfaceFormat::CoreProfile);
+    format.setVersion(4, 5);
+    format.setSamples(16);
+    format.setSwapInterval(0);
+
+    QSurfaceFormat::setDefaultFormat(format);
+
+    glMgr = GLMgr;
+
     mainWindow = new MainWindow();
     mainWindow->show();
 }

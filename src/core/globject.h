@@ -3,6 +3,7 @@
 
 #include <QObject>
 
+#include <QOpenGLFunctions_4_5_Core>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
@@ -16,12 +17,14 @@ public:
     explicit GLObject(QObject* parent = 0);
     ~GLObject();
 
-    virtual void Initialize();
+    virtual void Initialize(QOpenGLFunctions_4_5_Core* glFunctions);
     virtual void Draw(const QMatrix4x4& mvp);
 
     const QOpenGLShaderProgram* getShader() { return shader; }
 
 protected:
+    QOpenGLFunctions_4_5_Core* functions;
+
     QOpenGLShaderProgram* shader;
 
     QOpenGLBuffer vbo;

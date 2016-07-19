@@ -3,14 +3,14 @@
 #include <QOpenGLContext>
 #include <QOpenGLFunctions_4_5_Core>
 
-const GLfloat vertices[] =
+constexpr GLfloat vertices[] =
 {
     0.0f, 0.707f,
     -0.5f, -0.5f,
     0.5f, -0.5f
 };
 
-const GLfloat colors[] =
+constexpr GLfloat colors[] =
 {
     1.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f,
@@ -31,8 +31,10 @@ Triangle::~Triangle()
     delete shader;
 }
 
-void Triangle::Initialize()
+void Triangle::Initialize(QOpenGLFunctions_4_5_Core* glFunctions)
 {
+    GLObject::Initialize(glFunctions);
+
     // todo shader manager, borrow if exists
     shader = new QOpenGLShaderProgram(this);
     shader->addShaderFromSourceFile(QOpenGLShader::Vertex, "F:\\Work Library\\Programming\\Qt\\Unnamed\\bin\\shaders\\basic\\triangle.vert");
@@ -75,8 +77,6 @@ void Triangle::Initialize()
 
 void Triangle::Draw(const QMatrix4x4& mvp)
 {
-    QOpenGLFunctions_4_5_Core* functions = QOpenGLContext::currentContext()->versionFunctions<QOpenGLFunctions_4_5_Core>();
-
     shader->bind();
     {
         shader->setUniformValue(mvpLoc, mvp);
@@ -85,8 +85,6 @@ void Triangle::Draw(const QMatrix4x4& mvp)
         vao.bind();
         functions->glDrawArrays(GL_TRIANGLES, 0, 3);
         vao.release();
-
-        //qDebug() << "Draw";
     }
     shader->release();
 }

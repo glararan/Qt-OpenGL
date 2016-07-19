@@ -1,43 +1,84 @@
-#ifndef GLWINDOW_H
-#define GLWINDOW_H
+#ifndef GLWINDOW2_H
+#define GLWINDOW2_H
 
-#include <QOpenGLWindow>
+#include <QPaintDeviceWindow>
+
+#include <QOpenGLContext>
 #include <QOpenGLFunctions_4_5_Core>
-
 #include <QTimer>
 
-class GLWindow : public QOpenGLWindow, protected QOpenGLFunctions_4_5_Core
+class GLWindowPrivate;
+
+class GLWindow : public QPaintDeviceWindow
 {
     Q_OBJECT
 
 public:
-    GLWindow();
-    explicit GLWindow(QOpenGLContext* sharedContext);
+    enum UpdateBehavior
+    {
+        NoPartialUpdate,
+        PartialUpdateBlit,
+        PartialUpdateBlend
+    };
+
+    explicit GLWindow(UpdateBehavior updateBehavior, QWindow* parent = Q_NULLPTR);
+    explicit GLWindow(QOpenGLContext* shareContext, UpdateBehavior updateBehavior, QWindow* parent = Q_NULLPTR);
+    explicit GLWindow(QOpenGLFunctions_4_5_Core* glFunctions, QOpenGLContext* shareContext, UpdateBehavior updateBehavior, QWindow* parent = Q_NULLPTR);
     ~GLWindow();
+
+    bool isValid() const;
+
+    void makeCurrent();
+    void doneCurrent();
 
     void setFpsCounter(bool enable);
 
+    QOpenGLContext* context() const;
+
+    UpdateBehavior updateBehavior() const;
+    GLuint defaultFramebufferObject() const;
+
+    QImage grabFramebuffer();
+
 protected:
-    void initializeGL() Q_DECL_OVERRIDE;
-    void paintGL() Q_DECL_OVERRIDE;
-    void resizeGL(int width, int height) Q_DECL_OVERRIDE;
+    virtual void initializeGL();
+    virtual void paintGL();
+    virtual void paintUnderGL();
+    virtual void paintOverGL();
+    virtual void resizeGL(int width, int height);
 
     bool event(QEvent* event) Q_DECL_OVERRIDE;
 
     void exposeEvent(QExposeEvent* event) Q_DECL_OVERRIDE;
+    void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;
+    void resizeEvent(QResizeEvent* event) Q_DECL_OVERRIDE;
+
+    int metric(PaintDeviceMetric metric) const Q_DECL_OVERRIDE;
+
+    QPaintDevice* redirected(QPoint*) const Q_DECL_OVERRIDE;
 
     virtual void initialize();
     virtual void render();
 
 private:
+    Q_DECLARE_PRIVATE(GLWindow)
+    Q_DISABLE_COPY(GLWindow)
+
+    QOpenGLContext* glContext = Q_NULLPTR;
+    QOpenGLFunctions_4_5_Core* functions = Q_NULLPTR;
+
     bool pendingUpdate = false;
     bool draw = true;
+    bool isCopy = false;
 
     bool painted = true;
 
     int fps = 0;
 
     QTimer fpsTimer;
+
+signals:
+    void frameSwapped();
 
 public slots:
     void renderNow();
@@ -46,4 +87,4 @@ private slots:
     void fpsTimeout();
 };
 
-#endif // GLWINDOW_H
+#endif // GLWINDOW2_H

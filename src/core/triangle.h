@@ -11,7 +11,7 @@ public:
     explicit Triangle(QObject* parent = 0);
     ~Triangle();
 
-    void Initialize() Q_DECL_OVERRIDE;
+    void Initialize(QOpenGLFunctions_4_5_Core* glFunctions) Q_DECL_OVERRIDE;
     void Draw(const QMatrix4x4& mvp) Q_DECL_OVERRIDE;
 
 private:

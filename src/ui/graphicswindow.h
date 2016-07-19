@@ -8,17 +8,18 @@
 #include <QOpenGLVertexArrayObject>
 #include <QMatrix4x4>
 #include <QVector>
+#include <QPoint>
 
 #include "../core/globject.h"
 #include "../core/triangle.h"
 
-class GraphicsWindow : public GLWindow
+class GraphicsWindow : public GLWindow, protected QOpenGLFunctions_4_5_Core
 {
     Q_OBJECT
 
 public:
-    GraphicsWindow();
-    explicit GraphicsWindow(GraphicsWindow* view);
+    explicit GraphicsWindow(QWindow* parent = Q_NULLPTR);
+    explicit GraphicsWindow(GraphicsWindow* view, QWindow* parent = Q_NULLPTR);
     ~GraphicsWindow();
 
     Triangle* getTriangle() const { return triangle; }
@@ -34,13 +35,15 @@ protected:
     void mouseMoveEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
 
 private:
-    GraphicsWindow* mainView;
+    GraphicsWindow* mainView = Q_NULLPTR;
 
     QVector<GLObject*> glObjects;
 
-    Triangle* triangle;
+    Triangle* triangle = Q_NULLPTR;
 
     QMatrix4x4 mvp;
+
+    QPoint lastPos;
 };
 
 #endif // GRAPHICSWINDOW_H
