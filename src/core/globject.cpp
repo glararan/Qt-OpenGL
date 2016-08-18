@@ -1,4 +1,4 @@
-#include "globject.h"
+#include "GLObject.h"
 
 GLObject::GLObject(QObject* parent)
 : QObject(parent)
@@ -19,5 +19,4 @@ void GLObject::Initialize(QOpenGLFunctions_4_5_Core* glFunctions)
 void GLObject::Draw(const QMatrix4x4& mvp)
 {
     Q_UNUSED(mvp);
-    Q_UNUSED(copy);
 }

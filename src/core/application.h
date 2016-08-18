@@ -3,9 +3,9 @@
 
 #include <QApplication>
 
-#include "../ui/mainwindow.h"
+#include <UI/MainWindow.h>
 
-#include "global.h"
+#include "Global.h"
 
 class Application : public QApplication
 {

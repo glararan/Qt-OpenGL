@@ -1,7 +1,7 @@
 #ifndef GRAPHICSWINDOW_H
 #define GRAPHICSWINDOW_H
 
-#include "glwindow.h"
+#include "GLWindow.h"
 
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
@@ -10,8 +10,10 @@
 #include <QVector>
 #include <QPoint>
 
-#include "../core/globject.h"
-#include "../core/triangle.h"
+#include <Core/Camera.h>
+#include <Core/Cube.h>
+#include <Core/GLObject.h>
+#include <Core/Triangle.h>
 
 class GraphicsWindow : public GLWindow, protected QOpenGLFunctions_4_5_Core
 {
@@ -24,26 +26,34 @@ public:
 
     Triangle* getTriangle() const { return triangle; }
     const QVector<GLObject*> getGLObjects() { return glObjects; }
-    const QMatrix4x4 getMVP() { return mvp; }
+    const Camera& getCamera() const { return camera; }
 
-    void setMVP(const QMatrix4x4& modelViewProj) { mvp = modelViewProj; }
+    //void setCamera(const Camera& cam) { camera = cam; }
 
 protected:
     void initialize() Q_DECL_OVERRIDE;
     void render() Q_DECL_OVERRIDE;
+    void resizeGL(int width, int height) Q_DECL_OVERRIDE;
 
     void mouseMoveEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
+
+    void keyPressEvent(QKeyEvent* event) Q_DECL_OVERRIDE;
 
 private:
     GraphicsWindow* mainView = Q_NULLPTR;
 
+    Camera camera;
+
     QVector<GLObject*> glObjects;
 
     Triangle* triangle = Q_NULLPTR;
-
-    QMatrix4x4 mvp;
+    Cube* cube = Q_NULLPTR;
 
     QPoint lastPos;
+
+    QMatrix4x4 view;
+
+    double frame = 0;
 };
 
 #endif // GRAPHICSWINDOW_H

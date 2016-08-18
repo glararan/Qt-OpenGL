@@ -1,4 +1,4 @@
-#include "glwindow.h"
+#include "GLWindow.h"
 
 #include <QtGui/private/qpaintdevicewindow_p.h>
 #include <QtGui/private/qopengltextureblitter_p.h>
@@ -231,7 +231,7 @@ void GLWindowPaintDevice::ensureActiveTarget()
     GLWindowPrivate::get(win)->bindFBO();
 }
 
-/// GLWindow2
+/// GLWindow
 GLWindow::GLWindow(UpdateBehavior updateBehavior, QWindow* parent)
 : QPaintDeviceWindow(*(new GLWindowPrivate(Q_NULLPTR, updateBehavior)), parent)
 {
@@ -341,6 +341,8 @@ void GLWindow::initializeGL()
 
     initialize();
 
+    deltaTimer.start();
+
     renderNow();
 }
 
@@ -349,6 +351,11 @@ void GLWindow::paintGL()
     functions->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     render();
+
+    double currFrame = (double)deltaTimer.elapsed() / 1000.0;
+
+    deltaTime = currFrame - lastFrame;
+    lastFrame = currFrame;
 
     painted = true;
 

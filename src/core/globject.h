@@ -30,6 +30,8 @@ protected:
     QOpenGLBuffer vbo;
     QOpenGLVertexArrayObject vao;
 
+    QMatrix4x4 model;
+
 signals:
 
 public slots:

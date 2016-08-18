@@ -1,20 +1,16 @@
-#include "triangle.h"
+#include "Triangle.h"
+
+#include "Vertex.h"
+#include "Global.h"
 
 #include <QOpenGLContext>
 #include <QOpenGLFunctions_4_5_Core>
 
-constexpr GLfloat vertices[] =
+const Vertex vertices[] =
 {
-    0.0f, 0.707f,
-    -0.5f, -0.5f,
-    0.5f, -0.5f
-};
-
-constexpr GLfloat colors[] =
-{
-    1.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f
+    Vertex(QVector3D(0.0f, 0.707f, 0.0f), QVector3D(1.0f, 0.0f, 0.0f)),
+    Vertex(QVector3D(-0.5f, -0.5f, 0.0f), QVector3D(0.0f, 1.0f, 0.0f)),
+    Vertex(QVector3D(0.5f, -0.5f,  0.0f), QVector3D(0.0f, 0.0f, 1.0f))
 };
 
 Triangle::Triangle(QObject* parent)
@@ -36,39 +32,34 @@ void Triangle::Initialize(QOpenGLFunctions_4_5_Core* glFunctions)
     GLObject::Initialize(glFunctions);
 
     // todo shader manager, borrow if exists
-    shader = new QOpenGLShaderProgram(this);
+    /*shader = new QOpenGLShaderProgram(this);
     shader->addShaderFromSourceFile(QOpenGLShader::Vertex, "F:\\Work Library\\Programming\\Qt\\Unnamed\\bin\\shaders\\basic\\triangle.vert");
     shader->addShaderFromSourceFile(QOpenGLShader::Fragment, "F:\\Work Library\\Programming\\Qt\\Unnamed\\bin\\shaders\\basic\\triangle.frag");
     shader->link();
+    shader->bind();*/
+
+    QVector<ShaderDetails> shaderDetails;
+    shaderDetails << ShaderDetails(QOpenGLShader::Vertex,   "F:\\Work Library\\Programming\\Qt\\Unnamed\\bin\\shaders\\basic\\triangle.vert");
+    shaderDetails << ShaderDetails(QOpenGLShader::Fragment, "F:\\Work Library\\Programming\\Qt\\Unnamed\\bin\\shaders\\basic\\triangle.frag");
+
+    shader = ShaderMgr->getShader(shaderDetails);
     shader->bind();
 
     mvpLoc = shader->uniformLocation("mvp");
 
     // VBO & VAO
-    /*glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
-
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);*/
-
     vbo.create();
     vbo.bind();
     vbo.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    vbo.allocate(6 * sizeof(GLfloat) + 9 * sizeof(GLfloat));
-    vbo.write(0, vertices, 6 * sizeof(GLfloat));
-    vbo.write(6 * sizeof(GLfloat), colors, 9 * sizeof(GLfloat));
+    vbo.allocate(vertices, sizeof(vertices));
 
     vao.create();
     vao.bind();
 
     shader->enableAttributeArray(0);
     shader->enableAttributeArray(1);
-    shader->setAttributeBuffer(0, GL_FLOAT, 0, 2, 0);
-    shader->setAttributeBuffer(1, GL_FLOAT, 6 * sizeof(GLfloat), 3, 0);
+    shader->setAttributeBuffer(0, GL_FLOAT, Vertex::positionOffset(), Vertex::PositionSize, Vertex::stride());
+    shader->setAttributeBuffer(1, GL_FLOAT, Vertex::colorOffset(),    Vertex::ColorSize,    Vertex::stride());
 
     vao.release();
     vbo.release();
@@ -83,7 +74,7 @@ void Triangle::Draw(const QMatrix4x4& mvp)
 
         //glBindVertexArray(vao);
         vao.bind();
-        functions->glDrawArrays(GL_TRIANGLES, 0, 3);
+        functions->glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / sizeof(vertices[0]));
         vao.release();
     }
     shader->release();

@@ -1,7 +1,7 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-#include "globject.h"
+#include "GLObject.h"
 
 class Triangle : public GLObject
 {

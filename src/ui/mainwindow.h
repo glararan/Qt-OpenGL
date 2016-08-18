@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-#include "graphicswindow.h"
+#include "GraphicsWindow.h"
 
 namespace Ui
 {

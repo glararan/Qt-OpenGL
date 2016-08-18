@@ -1,11 +1,12 @@
-#ifndef GLWINDOW2_H
-#define GLWINDOW2_H
+#ifndef GLWINDOW_H
+#define GLWINDOW_H
 
 #include <QPaintDeviceWindow>
 
 #include <QOpenGLContext>
 #include <QOpenGLFunctions_4_5_Core>
 #include <QTimer>
+#include <QElapsedTimer>
 
 class GLWindowPrivate;
 
@@ -40,6 +41,8 @@ public:
 
     QImage grabFramebuffer();
 
+    const double& getDeltaTime() const { return deltaTime; }
+
 protected:
     virtual void initializeGL();
     virtual void paintGL();
@@ -73,9 +76,13 @@ private:
 
     bool painted = true;
 
+    double deltaTime = 0;
+    double lastFrame = 0;
+
     int fps = 0;
 
     QTimer fpsTimer;
+    QElapsedTimer deltaTimer;
 
 signals:
     void frameSwapped();
@@ -87,4 +94,4 @@ private slots:
     void fpsTimeout();
 };
 
-#endif // GLWINDOW2_H
+#endif // GLWINDOW_H

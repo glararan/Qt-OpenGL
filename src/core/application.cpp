@@ -1,6 +1,6 @@
-#include "application.h"
+#include "Application.h"
 
-#include "../ui/graphicswindow.h"
+#include <UI/GraphicsWindow.h>
 
 Application::Application(int argc, char** argv)
 : QApplication(argc, argv)

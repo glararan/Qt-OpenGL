@@ -1,4 +1,4 @@
-#include "glmanager.h"
+#include "GLManager.h"
 
 #include <QDebug>
 

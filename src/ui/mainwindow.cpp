@@ -1,7 +1,7 @@
-#include "mainwindow.h"
+#include "MainWindow.h"
 #include "ui_mainwindow.h"
 
-#include "../core/global.h"
+#include <Core/Global.h>
 
 #include <QDebug>
 
@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget* parent)
     graphics = new GraphicsWindow();
 
     graphicsWidget = QWidget::createWindowContainer(graphics, this);
+    graphicsWidget->setFocusPolicy(Qt::StrongFocus);
 
     setCentralWidget(graphicsWidget);
 
