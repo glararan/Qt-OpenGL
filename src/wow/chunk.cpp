@@ -2,83 +2,71 @@
 
 #define lettersAndSize 8
 
-Chunk::Chunk()
+namespace WoW
 {
-}
+    Chunk::Chunk()
+    {
+    }
 
-Chunk::Chunk(const QString &cLetters, const int& cSize, const QByteArray& cData)
-: letters(cLetters)
-, size(cSize)
-, data(cData)
-{
-}
+    Chunk::Chunk(const QString &cLetters, const int& cSize, const QByteArray& cData)
+    : letters(cLetters)
+    , size(cSize)
+    , data(cData)
+    {
+    }
 
-Chunk::Chunk(QFile& file, int& offset)
-{
-    file.seek(offset);
+    Chunk::Chunk(QFile& file, int& offset)
+    {
+        file.seek(offset);
 
-    letters = QString(file.read(4));
+        letters = QString(file.read(4));
 
-    offset += 4;
+        offset += 4;
 
-    file.seek(offset);
+        file.seek(offset);
 
-    size = file.read(4).toInt();
+        size = file.read(4).toInt();
 
-    offset += 4;
+        offset += 4;
 
-    file.seek(offset);
+        file.seek(offset);
 
-    data = file.read(size);
+        data = file.read(size);
 
-    offset += lettersAndSize + data.size();
-}
+        offset += lettersAndSize + data.size();
+    }
 
-QByteArray Chunk::getChunk() const
-{
-    QByteArray array;
+    QByteArray Chunk::getChunk() const
+    {
+        QByteArray array;
 
-    for(const QChar& character : letters)
-        array.append(character);
+        for(const QChar& character : letters)
+            array.append(character);
 
-    /*array.append(size & 0xff);
-    array.append((size >> 8)  & 0xff);
-    array.append((size >> 16) & 0xff);
-    array.append((size >> 24) & 0xff);*/
+        /*array.append(size & 0xff);
+        array.append((size >> 8)  & 0xff);
+        array.append((size >> 16) & 0xff);
+        array.append((size >> 24) & 0xff);*/
 
-    array.append(QByteArray::number(size));
-    array.append(data);
+        array.append(QByteArray::number(size));
+        array.append(data);
 
-    return array;
+        return array;
 
-    /*QVector<QChar> chunk;
+        /*QVector<QChar> chunk;
 
-    for(const QChar& character : letters)
-        chunk.append(character);
+        for(const QChar& character : letters)
+            chunk.append(character);
 
-    QVector<QChar> sizeVector;
-    sizeVector.append(size & 0xff);
-    sizeVector.append((size >> 8)  & 0xff);
-    sizeVector.append((size >> 16) & 0xff);
-    sizeVector.append((size >> 24) & 0xff);
+        QVector<QChar> sizeVector;
+        sizeVector.append(size & 0xff);
+        sizeVector.append((size >> 8)  & 0xff);
+        sizeVector.append((size >> 16) & 0xff);
+        sizeVector.append((size >> 24) & 0xff);
 
-    chunk.append(sizeVector);
-    chunk.append(data);
+        chunk.append(sizeVector);
+        chunk.append(data);
 
-    return chunk;*/
-}
-
-int Chunk::getOffset(const int offsetData) const
-{
-    return offsetData;
-}
-
-int Chunk::getSize() const
-{
-    return data.size();
-}
-
-bool Chunk::isEmpty() const
-{
-    return letters == "NONE" && size == 0 && data.size() == 0;
+        return chunk;*/
+    }
 }

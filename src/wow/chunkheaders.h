@@ -28,7 +28,7 @@ struct MhdrHeader
     quint32 modfOffset;
     quint32 mfboOffset;
     quint32 mh2oOffset;
-    quint32 mtxfOffset;
+    quint32 mtfxOffset;
 
     quint8 mamp_value;
     quint8 padding[3];
@@ -40,10 +40,13 @@ struct MhdrHeader
 
 struct McinHeader
 {
-    quint32 offset;
-    quint32 size;
-    quint32 flags;
-    quint32 asyncID;
+    struct Entry
+    {
+        quint32 offset;
+        quint32 size;
+        quint32 flags;
+        quint32 asyncID;
+    } entries[CHUNKS_HORIZONTAL * CHUNKS_VERTICAL];
 };
 
 struct MtexHeader
@@ -152,7 +155,7 @@ struct MfboHeader
     } minimum, maximum;
 };
 
-struct MtxfHeader
+struct MtfxHeader
 {
     quint32 unk1 : 1;
     quint32 unk2 : 3;

@@ -3,47 +3,50 @@
 
 #include <QObject>
 
-class Archive;
-
-class ArchiveFile : public QObject
+namespace WoW
 {
-    Q_OBJECT
+    class Archive;
 
-public:
-    explicit ArchiveFile(const QString& file, const bool& create = false, QObject* parent = Q_NULLPTR);
-    ~ArchiveFile();
+    class ArchiveFile : public QObject
+    {
+        Q_OBJECT
 
-    size_t getSize() const     { return size; }
-    size_t getPosition() const { return pointer; }
-    char*  getBuffer() const   { return buffer; }
-    char*  getPointer() const  { return buffer + pointer; }
+    public:
+        explicit ArchiveFile(const QString& file, const bool& create = false, QObject* parent = Q_NULLPTR);
+        ~ArchiveFile();
 
-    void close();
+        size_t getSize() const     { return size; }
+        size_t getPosition() const { return pointer; }
+        char*  getBuffer() const   { return buffer; }
+        char*  getPointer() const  { return buffer + pointer; }
 
-    bool isOnDisk() const      { return onDisk; }
-    bool isAtEndOfFile() const { return endOfFile; }
+        void close();
 
-    void setBuffer(char* value, size_t length);
+        bool isOnDisk() const { return onDisk; }
+        bool isEof() const    { return eof; }
 
-    void save();
-    void saveToMPQ(Archive* archive, const QString& mpqPath = Q_NULLPTR);
+        void setBuffer(char* value, size_t length);
 
-    static bool exists(const QString& file);
-    static void diskSearchPath(const QString& path);
+        void save();
+        void saveToMPQ(Archive* archive, const QString& mpqPath = Q_NULLPTR);
 
-private:
-    Q_DISABLE_COPY(ArchiveFile)
+        static bool exists(const QString& file);
+        static void diskSearchPath(const QString& path);
 
-    bool endOfFile = true;
-    char* buffer   = Q_NULLPTR;
-    size_t pointer = 0;
-    size_t size    = 0;
+    private:
+        Q_DISABLE_COPY(ArchiveFile)
 
-    bool onDisk = false;
+        bool eof       = true; // end of file
+        char* buffer   = Q_NULLPTR;
+        size_t pointer = 0;
+        size_t size    = 0;
 
-    QString fileName;
+        bool onDisk = false;
 
-    friend class Archive;
-};
+        QString fileName;
+
+        friend class Archive;
+    };
+}
 
 #endif // ARCHIVEFILE_H

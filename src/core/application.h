@@ -19,6 +19,8 @@ private:
     MainWindow* mainWindow;
 
     GLManager* glMgr;
+    WoW::ArchiveManager* archMgr;
+    SettingsManager* settingsMgr;
 };
 
 #endif // APPLICATION_H

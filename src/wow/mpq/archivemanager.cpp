@@ -1,120 +1,188 @@
 #include "ArchiveManager.h"
 
 #include "../StormLib.h"
+#include "../Manager.h"
 
 #include <Core/Singleton.h>
 
 #include <QStringList>
 
 #define stormLib Singleton<StormLib>::instancePtr()
+#define WoWMgr   Singleton<Manager>::instancePtr()
 
-ArchiveManager::ArchiveManager(QObject* parent)
-: QObject(parent)
+namespace WoW
 {
-    stormLib->open();
-}
-
-ArchiveManager::~ArchiveManager()
-{
-    unloadAll();
-
-    stormLib->close();
-}
-
-void ArchiveManager::addToListFile(const QStringList& value)
-{
-    QMutexLocker locker(&listFileMutex);
-
-    listFile.append(value);
-
-    if(isFinishedLoading())
+    ArchiveManager::ArchiveManager(QObject* parent)
+    : QObject(parent)
     {
-        listFile.sort();
-        listFile.removeDuplicates();
+        stormLib->open();
     }
-}
 
-Archive* ArchiveManager::create(const QString& file, bool processListFile)
-{
-    Archive* archive = new Archive(file, processListFile, true, this);
-
-    openedArchives.push_back(QPair<QString, Archive*>(file, archive));
-    // async loader add
-
-    return archive;
-}
-
-Archive* ArchiveManager::load(const QString& file, bool processListFile)
-{
-    Archive* archive = new Archive(file, processListFile, false, this);
-
-    openedArchives.push_back(QPair<QString, Archive*>(file, archive));
-    // async loader add
-
-    return archive;
-}
-
-void ArchiveManager::unload(const QString& file)
-{
-    for(const QPair<QString, Archive*> pair : openedArchives)
+    ArchiveManager::~ArchiveManager()
     {
-        if(pair.first == file)
-        {
-            delete pair.second;
+        unloadAll();
 
-            openedArchives.removeOne(pair);
+        stormLib->close();
+    }
+
+    void ArchiveManager::addToListFile(const QStringList& value)
+    {
+        QMutexLocker locker(&listFileMutex);
+
+        listFile.append(value);
+
+        if(isFinishedLoading())
+        {
+            listFile.sort();
+            listFile.removeDuplicates();
         }
     }
-}
 
-void ArchiveManager::unloadAll()
-{
-    for(const QPair<QString, Archive*> pair : openedArchives)
-        delete pair.second;
-
-    openedArchives.clear();
-}
-
-bool ArchiveManager::isFinishedLoading() const
-{
-    for(const QPair<QString, Archive*> pair : openedArchives)
+    void ArchiveManager::openCommonArchives(const Version& version)
     {
-        if(!pair.second->isLoadingFinished())
-            return false;
+        QStringList archives;
+
+        switch(version)
+        {
+            case Classic:
+                break;
+
+            case TBC:
+                break;
+
+            case WotLK: // archives coppied from Noggit
+                {
+                    archives << "common.MPQ"
+                             << "common-2.MPQ"
+                             << "expansion.MPQ"
+                             << "lichking.MPQ"
+                             << "patch.MPQ"
+                             << "patch-%1.MPQ"
+                             << "{locale}/locale-{locale}.MPQ"
+                             << "{locale}/expansion-locale-{locale}.MPQ"
+                             << "{locale}/lichking-locale-{locale}.MPQ"
+                             << "{locale}/patch-{locale}.MPQ"
+                             << "{locale}/patch-{locale}-%1.MPQ";
+                    
+                    for(const QString& archive : archives)
+                    {
+                        QString filePath(WoWMgr->getGameDir().absoluteFilePath("Data/" + archive));
+
+                        if(filePath.contains("{locale}"))
+                            filePath.replace("{locale}", WoWMgr->getGameLocale());
+
+                        if(filePath.contains("%1"))
+                        {
+                            for(char i('2'); i <= '9'; ++i)
+                            {
+                                const QString newFilePath(filePath.arg(i));
+
+                                if(QFile::exists(newFilePath))
+                                    load(newFilePath, true);
+                            }
+
+                            continue;
+                        }
+
+                        if(QFile::exists(filePath))
+                            load(filePath, true);
+                    }
+                }
+                break;
+
+            case Cataclysm:
+                break;
+
+            case MoP:
+                break;
+
+            case Legion:
+                break;
+        }
     }
 
-    return true;
-}
-
-bool ArchiveManager::isOpen(Archive* archive)
-{
-    for(const QPair<QString, Archive*> pair : openedArchives)
+    Archive* ArchiveManager::create(const QString& file, const bool processListFile)
     {
-        if(pair.second == archive)
-            return true;
+        Archive* archive = new Archive(file, processListFile, true, this);
+
+        openedArchives.append(QPair<QString, Archive*>(file, archive));
+        // async loader add
+
+        return archive;
     }
 
-    return false;
-}
-
-void ArchiveManager::finishLoading()
-{
-    for(const QPair<QString, Archive*> pair : openedArchives)
-        pair.second->finishLoading();
-}
-
-bool ArchiveManager::exists(const QString& file) const
-{
-    for(const QPair<QString, Archive*> pair : openedArchives)
+    Archive* ArchiveManager::load(const QString& file, const bool processListFile)
     {
-        if(pair.second->hasFile(file))
-            return true;
+        Archive* archive = new Archive(file, processListFile, false, this);
+
+        openedArchives.append(QPair<QString, Archive*>(file, archive));
+        // async loader add
+
+        return archive;
     }
 
-    return false;
-}
+    void ArchiveManager::unload(const QString& file)
+    {
+        for(const QPair<QString, Archive*> pair : openedArchives)
+        {
+            if(pair.first == file)
+            {
+                delete pair.second;
 
-void ArchiveManager::openFile(const QString& file, size_t* size, char** buffer)
-{
+                openedArchives.removeOne(pair);
+            }
+        }
+    }
 
+    void ArchiveManager::unloadAll()
+    {
+        for(const QPair<QString, Archive*> pair : openedArchives)
+            delete pair.second;
+
+        openedArchives.clear();
+    }
+
+    bool ArchiveManager::isFinishedLoading() const
+    {
+        for(const QPair<QString, Archive*> pair : openedArchives)
+        {
+            if(!pair.second->isLoadingFinished())
+                return false;
+        }
+
+        return true;
+    }
+
+    bool ArchiveManager::isOpen(Archive* archive)
+    {
+        for(const QPair<QString, Archive*> pair : openedArchives)
+        {
+            if(pair.second == archive)
+                return true;
+        }
+
+        return false;
+    }
+
+    void ArchiveManager::finishLoading()
+    {
+        for(const QPair<QString, Archive*> pair : openedArchives)
+            pair.second->finishLoading();
+    }
+
+    bool ArchiveManager::exists(const QString& file) const
+    {
+        for(const QPair<QString, Archive*> pair : openedArchives)
+        {
+            if(pair.second->hasFile(file))
+                return true;
+        }
+
+        return false;
+    }
+
+    void ArchiveManager::openFile(const QString& file, size_t* size, char** buffer)
+    {
+
+    }
 }

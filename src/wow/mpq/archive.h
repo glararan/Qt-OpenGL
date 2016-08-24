@@ -7,39 +7,43 @@
 
 typedef void* HANDLE;
 
-class ArchiveManager;
-
-class Archive : public QObject
+namespace WoW
 {
-    Q_OBJECT
+    class ArchiveManager;
 
-public:
-    explicit Archive(const QString& file, bool processListFile, bool create = false, QObject* parent = Q_NULLPTR);
-    ~Archive();
+    class Archive : public QObject
+    {
+        Q_OBJECT
 
-    void addFile(ArchiveFile* file, QString mpqPath);
-    ArchiveFile* getFile(const QString& mpqPath);
-    bool hasFile(const QString& fileName) const;
-    bool readFile(const QString& fileName, size_t* size, char** buffer) const;
+    public:
+        explicit Archive(const QString& file, bool processListFile, bool create = false, QObject* parent = Q_NULLPTR);
+        ~Archive();
 
-    void finishLoading();
-    void save();
+        void addFile(ArchiveFile* file, QString mpqPath);
+        bool hasFile(const QString& fileName) const;
+        bool readFile(const QString& fileName, size_t* size, char** buffer) const;
 
-    const bool isLoadingFinished() const { return finished; }
+        // todo: implement getADT, getWDL, getWDT
 
-    const QStringList& getListFile() const { return listFile; }
+        void finishLoading();
+        void save();
 
-private:
-    HANDLE handler = Q_NULLPTR;
+        const bool isLoadingFinished() const { return finished; }
 
-    QStringList listFile;
+        const QStringList& getListFile() const { return listFile; }
 
-    bool finished = false;
+    private:
+        HANDLE handler = Q_NULLPTR;
 
-    friend class ArchiveManager;
+        QStringList listFile;
 
-signals:
-    void loadingFinished();
-};
+        bool finished = false;
+
+        friend class ArchiveManager;
+
+    signals:
+        void loadingFinished();
+    };
+}
 
 #endif // ARCHIVE_H

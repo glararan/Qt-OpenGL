@@ -1,4 +1,4 @@
-QT       += core gui opengl gui-private
+QT       += core gui opengl gui-private xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

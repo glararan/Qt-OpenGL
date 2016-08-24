@@ -4,38 +4,44 @@
 #include <QObject>
 #include <QMutex>
 
+#include "../Common.h"
 #include "Archive.h"
 
-class ArchiveManager : public QObject
+namespace WoW
 {
-    Q_OBJECT
+    class ArchiveManager : public QObject
+    {
+        Q_OBJECT
 
-public:
-    explicit ArchiveManager(QObject* parent = Q_NULLPTR);
-    ~ArchiveManager();
+    public:
+        explicit ArchiveManager(QObject* parent = Q_NULLPTR);
+        ~ArchiveManager();
 
-    Archive* create(const QString& file, bool processListFile = false);
-    Archive* load(const QString& file, bool processListFile = false);
+        void openCommonArchives(const Version& version);
 
-    void unload(const QString& file);
-    void unloadAll();
+        Archive* create(const QString& file, const bool processListFile = false);
+        Archive* load(const QString& file, const bool processListFile = false);
 
-    bool exists(const QString& file) const;
+        void unload(const QString& file);
+        void unloadAll();
 
-    void addToListFile(const QStringList& value);
-    void openFile(const QString& file, size_t* size, char** buffer);
-    void finishLoading();
+        bool exists(const QString& file) const;
 
-    bool isOpen(Archive* archive);
-    bool isFinishedLoading() const;
+        void addToListFile(const QStringList& value);
+        void openFile(const QString& file, size_t* size, char** buffer);
+        void finishLoading();
 
-    const QStringList& getListFile() const { return listFile; }
+        bool isOpen(Archive* archive);
+        bool isFinishedLoading() const;
 
-private:
-    QList<QPair<QString, Archive*>> openedArchives;
+        const QStringList& getListFile() const { return listFile; }
 
-    QStringList listFile;
-    QMutex listFileMutex;
-};
+    private:
+        QList<QPair<QString, Archive*>> openedArchives;
+
+        QStringList listFile;
+        QMutex listFileMutex;
+    };
+}
 
 #endif // ARCHIVEMANAGER_H

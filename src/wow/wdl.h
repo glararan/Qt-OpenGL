@@ -4,26 +4,32 @@
 #include <QObject>
 #include <QVector>
 
+#include "Common.h"
 #include "Chunk.h"
 
-class WDL
+namespace WoW
 {
-public:
-    WDL();
-    explicit WDL(const QString& file);
+    class WDL
+    {
+    public:
+        WDL();
+        explicit WDL(const QString& file);
 
-    bool save();
+        bool save(const QString& altFileName = QString());
 
-private:
-    QString fileName = "none";
+    private:
+        QString fileName = "none";
 
-    Chunk MVER;
-    Chunk MWMO;
-    Chunk MWID;
-    Chunk MODF;
-    Chunk MAOF;
+        Version version = WotLK;
 
-    QVector<Chunk> MARE_MAHO;
-};
+        Chunk MVER;
+        Chunk MWMO;
+        Chunk MWID;
+        Chunk MODF;
+        Chunk MAOF;
+
+        QVector<Chunk> MARE_MAHO;
+    };
+}
 
 #endif // WDL_H

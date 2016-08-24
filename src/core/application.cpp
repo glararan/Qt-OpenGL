@@ -15,14 +15,20 @@ Application::Application(int argc, char** argv)
     format.setProfile(QSurfaceFormat::CoreProfile);
     format.setVersion(4, 5);
     format.setSamples(16);
+    format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
     format.setSwapInterval(0);
 
     QSurfaceFormat::setDefaultFormat(format);
 
-    glMgr = GLMgr;
+    glMgr       = GLMgr;
+    archMgr     = ArchiveMgr;
+    settingsMgr = SettingsMgr;
+    settingsMgr->setParent(this);
 
     mainWindow = new MainWindow();
     mainWindow->show();
+
+    connect(mainWindow, &MainWindow::destroyed, this, &Application::deleteLater);
 }
 
 Application::~Application()

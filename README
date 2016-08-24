@@ -1,0 +1,87 @@
+Coding guide
+
+HEADER
+#include Qt
+
+#include <..>
+
+#include ""
+
+class foo : public QObject
+{
+	Q_OBJECT
+
+public:
+	foo();
+	explicit foo(QObject* parent = Q_NULLPTR); // 1+ arg => explicit
+	~foo();
+
+	void a() const; // const if possible
+	
+	const T& get() const; // const both if possible
+	const T& get2() const { return c; } // one line syntax in header file
+
+	void set(const T& value) { c = value; } // const if possible, one line syntax in header file
+
+private:
+	T* b = Q_NULLPTR; // pointers first
+
+	int c = 5; // local with default value instead in constructor
+}
+
+
+SOURCE
+#include "foo.h"
+
+#include ".."
+
+#include <..>
+
+#include Qt
+
+foo::foo()
+: QObject(Q_NULLPTR)
+{
+}
+
+foo::foo(QObject* parent)
+: QObject(parent)
+, c(10)
+{
+}
+
+void a()
+{
+	for(const int& value : ...)
+	{
+		..
+		..
+	}
+
+	if(c == 10)
+		c = 5;
+
+	if(c == 10)
+	{
+		c = 5;
+		c = 6;
+	}
+}
+
+GENERAL C++
+for(int x = 0; x < ..; ++x) // use preincrement where it can be used! its faster
+
+// use new c++11 range loops instead qt foreach.. even documentation saying use new c++11
+for(const Foo& foo : foos)
+
+// local variables without operator=, its a bit faster.. few instruction cycles
+A a(args..)
+A* a(new A(args))
+
+GENERAL QT
+> Use Q_NULLPTR instead of 0.. I know its not so neccessary but keep project this way and it will not be trash like Noggit
+> Use QSharedPointer/QScopedPointer instead allocating this way => A* a(new A()) .. a lot of programmers in C++ forgots to delete memory! This will do it for you
+
+QT UI
+> Use designer if its possible
+> Use actions & signals in designer if possible

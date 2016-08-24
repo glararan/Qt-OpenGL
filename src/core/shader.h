@@ -24,6 +24,9 @@ private:
 class Shader
 {
 public:
+    Shader();
+    ~Shader();
+
     void addDetail(const QString& file, const QOpenGLShader::ShaderType& type);
 
     bool contains(const ShaderDetails& detail) const;

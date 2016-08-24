@@ -15,6 +15,16 @@ bool ShaderDetails::operator==(const ShaderDetails& other) const
 }
 
 /// Shader
+Shader::Shader() : program(QSharedPointer<QOpenGLShaderProgram>(new QOpenGLShaderProgram()))
+{
+}
+
+Shader::~Shader()
+{
+    program.clear();
+    details.clear();
+}
+
 void Shader::addDetail(const QString& file, const QOpenGLShader::ShaderType& type)
 {
     details.append(ShaderDetails(type, file));

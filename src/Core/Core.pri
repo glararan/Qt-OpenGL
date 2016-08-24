@@ -1,24 +1,26 @@
-SOURCES += src/Core/Application.cpp \
-    src/Core/GLObject.cpp \
-    src/Core/Triangle.cpp \
-    src/Core/GLManager.cpp \
-    src/Core/Camera.cpp \
-    src/Core/Cube.cpp \
-    src/Core/World.cpp \
-    src/Core/ShaderManager.cpp \
-    src/Core/Shader.cpp \
+SOURCES += $$PWD/Application.cpp \
+    $$PWD/GLObject.cpp \
+    $$PWD/Triangle.cpp \
+    $$PWD/GLManager.cpp \
+    $$PWD/Camera.cpp \
+    $$PWD/Cube.cpp \
+    $$PWD/World.cpp \
+    $$PWD/ShaderManager.cpp \
+    $$PWD/Shader.cpp \
+    $$PWD/SettingsManager.cpp
 
-HEADERS  += src/Core/Application.h \
-    src/Core/GLObject.h \
-    src/Core/Triangle.h \
-    src/Core/GLManager.h \
-    src/Core/Singleton.h \
-    src/Core/Global.h \
-    src/Core/Camera.h \
-    src/Core/Cube.h \
-    src/Core/Vertex.h \
-    src/Core/World.h \
-    src/Core/ShaderManager.h \
-    src/Core/Shader.h \
+HEADERS  += $$PWD/Application.h \
+    $$PWD/GLObject.h \
+    $$PWD/Triangle.h \
+    $$PWD/GLManager.h \
+    $$PWD/Singleton.h \
+    $$PWD/Global.h \
+    $$PWD/Camera.h \
+    $$PWD/Cube.h \
+    $$PWD/Vertex.h \
+    $$PWD/World.h \
+    $$PWD/ShaderManager.h \
+    $$PWD/Shader.h \
+    $$PWD/SettingsManager.h
 
 INCLUDEPATH += $$PWD/../
