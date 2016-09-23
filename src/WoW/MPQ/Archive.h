@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include <Core/AsyncWorker.h>
+
 #include "ArchiveFile.h"
 
 typedef void* HANDLE;
@@ -11,7 +13,7 @@ namespace WoW
 {
     class ArchiveManager;
 
-    class Archive : public QObject
+    class Archive : public AsyncWorker
     {
         Q_OBJECT
 
@@ -25,10 +27,8 @@ namespace WoW
 
         // todo: implement getADT, getWDL, getWDT
 
-        void finishLoading();
+        void process() Q_DECL_OVERRIDE;
         void save();
-
-        const bool isLoadingFinished() const { return finished; }
 
         const QStringList& getListFile() const { return listFile; }
 
@@ -37,12 +37,7 @@ namespace WoW
 
         QStringList listFile;
 
-        bool finished = false;
-
         friend class ArchiveManager;
-
-    signals:
-        void loadingFinished();
     };
 }
 

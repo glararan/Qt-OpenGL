@@ -19,9 +19,12 @@ namespace WoW
         dataMVER.append((18 >> 24) & 0xff);*/
 
         // Chunks
-        MVER = Chunk("REVM", sizeof(MverHeader), QByteArray::number(18));
-        MPHD = Chunk("DHPM", sizeof(MphdHeader), QByteArray());
-        MAIN = Chunk("NIAM", sizeof(MainHeader), QByteArray());
+        MverHeader mVer;
+        mVer.version = 18;
+
+        MVER = Chunk<MverHeader>("REVM", mVer);
+        MPHD = Chunk<MphdHeader>("DHPM");
+        MAIN = Chunk<MainHeader>("NIAM");
     }
 
     WDT::WDT(const QString& file)
@@ -33,17 +36,17 @@ namespace WoW
         {
             int offset = 0;
 
-            MVER = Chunk(wdt, offset);
-            MPHD = Chunk(wdt, offset);
-            MAIN = Chunk(wdt, offset);
+            MVER = Chunk<MverHeader>(wdt, offset);
+            MPHD = Chunk<MphdHeader>(wdt, offset);
+            MAIN = Chunk<MainHeader>(wdt, offset);
 
             const int flags = MPHD.getOffset(0);
 
             if(flags & 1)
-                MWMO = Chunk(wdt, offset);
+                MWMO = Chunk<MwmoHeader>(wdt, offset);
 
             if(MWMO.getSize() > 0)
-                MODF = Chunk(wdt, offset);
+                MODF = Chunk<ModfHeader>(wdt, offset);
 
             wdt.close();
         }
@@ -53,15 +56,23 @@ namespace WoW
 
     bool WDT::getADT(const int& x, const int& y)
     {
-        return MAIN.getStructure<MainHeader>().ADTs[x][y].exist > 0 ? true : false;
+        return MAIN.getStructure().ADTs[x][y].exist > 0 ? true : false;
     }
 
     void WDT::setADT(const quint32& value, const int& x, const int& y)
     {
-        MainHeader header = MAIN.getStructure<MainHeader>();
+        MainHeader header = MAIN.getStructure();
         header.ADTs[x][y].exist = value;
 
         MAIN.setStructure(header);
+    }
+
+    void WDT::setFlags(const quint32& value)
+    {
+        MphdHeader header = MPHD.getStructure();
+        header.flags      = value;
+
+        MPHD.setStructure(header);
     }
 
     bool WDT::save(const QString& altFileName)

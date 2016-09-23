@@ -15,7 +15,7 @@
 namespace WoW
 {
     Archive::Archive(const QString& file, bool processListFile, bool create, QObject* parent)
-    : QObject(parent)
+    : AsyncWorker(parent)
     {
         if(create)
         {
@@ -32,10 +32,8 @@ namespace WoW
                 qDebug() << tr("MPQ Archive successfully opened: ") << file;
         }
 
-        finished = !processListFile;
-
-        if(finished)
-            emit loadingFinished();
+        if(!processListFile)
+            emit finished();
     }
 
     Archive::~Archive()
@@ -101,12 +99,10 @@ namespace WoW
         return opened;
     }
 
-    void Archive::finishLoading()
+    void Archive::process()
     {
-        if(finished)
+        if(isFinished())
             return;
-
-        finished = true;
 
         HANDLE fileHandler;
 
@@ -131,7 +127,7 @@ namespace WoW
             delete[] buffer;
         }
 
-        emit loadingFinished();
+        AsyncWorker::process();
     }
 
     void Archive::save()

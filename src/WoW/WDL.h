@@ -6,6 +6,7 @@
 
 #include "Common.h"
 #include "Chunk.h"
+#include "ChunkHeaders.h"
 
 namespace WoW
 {
@@ -22,13 +23,13 @@ namespace WoW
 
         Version version = WotLK;
 
-        Chunk MVER;
-        Chunk MWMO;
-        Chunk MWID;
-        Chunk MODF;
-        Chunk MAOF;
+        Chunk<MverHeader> MVER;
+        Chunk<MwmoHeader> MWMO;
+        Chunk<MwidHeader> MWID;
+        Chunk<ModfHeader> MODF;
+        Chunk<MaofHeader> MAOF;
 
-        QVector<Chunk> MARE_MAHO;
+        QVector<BaseChunk> MARE_MAHO;
     };
 }
 

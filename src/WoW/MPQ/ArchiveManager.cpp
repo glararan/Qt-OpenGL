@@ -20,6 +20,9 @@ namespace WoW
 
     ArchiveManager::~ArchiveManager()
     {
+        loadingThread.quit();
+        loadingThread.wait();
+
         unloadAll();
 
         stormLib->close();
@@ -103,20 +106,32 @@ namespace WoW
 
     Archive* ArchiveManager::create(const QString& file, const bool processListFile)
     {
-        Archive* archive = new Archive(file, processListFile, true, this);
+        Archive* archive(new Archive(file, processListFile, true, this));
+        archive->moveToThread(&loadingThread);
+
+        //connect(this, &ArchiveManager::operate, worker, &AsyncWorker::process);
+        //connect(worker, &AsyncWorker::resultReady, this, &ArchiveManager::handleResults);
 
         openedArchives.append(QPair<QString, Archive*>(file, archive));
-        // async loader add
+
+        if(!loadingThread.isRunning())
+            loadingThread.start();
 
         return archive;
     }
 
     Archive* ArchiveManager::load(const QString& file, const bool processListFile)
     {
-        Archive* archive = new Archive(file, processListFile, false, this);
+        Archive* archive(new Archive(file, processListFile, false, this));
+        archive->moveToThread(&loadingThread);
+
+        //connect(this, &ArchiveManager::operate, worker, &AsyncWorker::process);
+        //connect(worker, &AsyncWorker::resultReady, this, &ArchiveManager::handleResults);
 
         openedArchives.append(QPair<QString, Archive*>(file, archive));
-        // async loader add
+
+        if(!loadingThread.isRunning())
+            loadingThread.start();
 
         return archive;
     }
@@ -146,7 +161,7 @@ namespace WoW
     {
         for(const QPair<QString, Archive*> pair : openedArchives)
         {
-            if(!pair.second->isLoadingFinished())
+            if(!pair.second->isFinished())
                 return false;
         }
 
@@ -167,7 +182,7 @@ namespace WoW
     void ArchiveManager::finishLoading()
     {
         for(const QPair<QString, Archive*> pair : openedArchives)
-            pair.second->finishLoading();
+            pair.second->process();
     }
 
     bool ArchiveManager::exists(const QString& file) const

@@ -33,21 +33,20 @@ namespace WoW
 
         QString fileName;
 
-        Chunk MVER;
-        Chunk MHDR;
-        Chunk MCIN;
-        Chunk MTEX;
-        Chunk MMDX;
-        Chunk MMID;
-        Chunk MWMO;
-        Chunk MWID;
-        Chunk MDDF;
-        Chunk MODF;
-        Chunk MH2O;
-        Chunk MCNK[CELLS * CELLS];
-        //Chunk MCNK[CELLS * CELLS];
-        Chunk MFBO;
-        Chunk MTFX;
+        Chunk<MverHeader> MVER;
+        Chunk<MhdrHeader> MHDR;
+        Chunk<McinHeader> MCIN;
+        Chunk<MtexHeader> MTEX;
+        Chunk<MmdxHeader> MMDX;
+        Chunk<MmidHeader> MMID;
+        Chunk<MwmoHeader> MWMO;
+        Chunk<MwidHeader> MWID;
+        Chunk<MddfHeader> MDDF;
+        Chunk<ModfHeader> MODF;
+        Chunk<Mh2oHeader> MH2O;
+        Chunk<McnkHeader> MCNK[CELLS * CELLS];
+        Chunk<MfboHeader> MFBO;
+        Chunk<MtfxHeader> MTFX;
     };
 }
 

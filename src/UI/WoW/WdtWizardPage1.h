@@ -16,6 +16,8 @@ public:
     explicit WdtWizardPage1(QWidget* parent = Q_NULLPTR);
     ~WdtWizardPage1();
 
+    int getFlags() const;
+
     bool isComplete() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
 
@@ -24,6 +26,7 @@ private:
 
 private slots:
     void browsePath();
+    void versionChanged(const int version);
 };
 
 #endif // WDTWIZARDPAGE1_H

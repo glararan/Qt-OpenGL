@@ -1,4 +1,4 @@
-SOURCES += $$PWD/Chunk.cpp \
+SOURCES += \
     $$PWD/ADT.cpp \
     $$PWD/MPQ/Archive.cpp \
     $$PWD/MPQ/ArchiveManager.cpp \
@@ -8,7 +8,8 @@ SOURCES += $$PWD/Chunk.cpp \
     $$PWD/WDL.cpp \
     $$PWD/Manager.cpp \
     $$PWD/DBC.cpp \
-    $$PWD/DbcSchema.cpp
+    $$PWD/DbcSchema.cpp \
+    $$PWD/Chunk.cpp
 
 HEADERS  += $$PWD/Chunk.h \
     $$PWD/ChunkHeaders.h \

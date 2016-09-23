@@ -2,6 +2,7 @@
 #define ARCHIVEMANAGER_H
 
 #include <QObject>
+#include <QThread>
 #include <QMutex>
 
 #include "../Common.h"
@@ -41,6 +42,8 @@ namespace WoW
 
         QStringList listFile;
         QMutex listFileMutex;
+
+        QThread loadingThread;
     };
 }
 

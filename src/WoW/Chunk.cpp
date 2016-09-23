@@ -1,21 +1,25 @@
 #include "Chunk.h"
 
-#define lettersAndSize 8
-
 namespace WoW
 {
-    Chunk::Chunk()
+    BaseChunk::BaseChunk()
     {
     }
 
-    Chunk::Chunk(const QString &cLetters, const int& cSize, const QByteArray& cData)
+    BaseChunk::BaseChunk(const QString& cLetters, const int& cSize, const QByteArray& cData)
     : letters(cLetters)
     , size(cSize)
     , data(cData)
     {
     }
 
-    Chunk::Chunk(QFile& file, int& offset)
+    BaseChunk::BaseChunk(const QString& cLetters, const int& cSize)
+    : letters(cLetters)
+    , size(cSize)
+    {
+    }
+
+    BaseChunk::BaseChunk(QFile& file, int& offset)
     {
         file.seek(offset);
 
@@ -36,37 +40,16 @@ namespace WoW
         offset += lettersAndSize + data.size();
     }
 
-    QByteArray Chunk::getChunk() const
+    QByteArray BaseChunk::getChunk() const
     {
         QByteArray array;
 
         for(const QChar& character : letters)
             array.append(character);
 
-        /*array.append(size & 0xff);
-        array.append((size >> 8)  & 0xff);
-        array.append((size >> 16) & 0xff);
-        array.append((size >> 24) & 0xff);*/
-
-        array.append(QByteArray::number(size));
-        array.append(data);
+        array.append(QByteArray::fromRawData((const char*)&size, sizeof(size)));
+        array.append(data); // some annoying bug here, somehow data is modified even without touching them
 
         return array;
-
-        /*QVector<QChar> chunk;
-
-        for(const QChar& character : letters)
-            chunk.append(character);
-
-        QVector<QChar> sizeVector;
-        sizeVector.append(size & 0xff);
-        sizeVector.append((size >> 8)  & 0xff);
-        sizeVector.append((size >> 16) & 0xff);
-        sizeVector.append((size >> 24) & 0xff);
-
-        chunk.append(sizeVector);
-        chunk.append(data);
-
-        return chunk;*/
     }
 }

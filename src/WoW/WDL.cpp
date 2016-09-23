@@ -10,11 +10,11 @@ namespace WoW
     WDL::WDL()
     {
         // Chunks
-        MVER = Chunk("REVM", sizeof(MverHeader), QByteArray::number(18));
-        MWMO = Chunk("OMWM", sizeof(MwmoHeader), QByteArray());
-        MWID = Chunk("DIWM", sizeof(MwidHeader), QByteArray());
-        MODF = Chunk("FDOM", sizeof(ModfHeader), QByteArray());
-        MAOF = Chunk("OFAM", sizeof(MaofHeader), QByteArray());
+        MVER = Chunk<MverHeader>("REVM", sizeof(MverHeader), QByteArray::number(18));
+        MWMO = Chunk<MwmoHeader>("OMWM");
+        MWID = Chunk<MwidHeader>("DIWM");
+        MODF = Chunk<ModfHeader>("FDOM");
+        MAOF = Chunk<MaofHeader>("OFAM");
     }
 
     WDL::WDL(const QString& file)
@@ -25,14 +25,14 @@ namespace WoW
         {
             int offset = 0;
 
-            MVER = Chunk(wdl, offset);
-            MWMO = Chunk(wdl, offset);
-            MWID = Chunk(wdl, offset);
-            MODF = Chunk(wdl, offset);
-            MAOF = Chunk(wdl, offset);
+            MVER = Chunk<MverHeader>(wdl, offset);
+            MWMO = Chunk<MwmoHeader>(wdl, offset);
+            MWID = Chunk<MwidHeader>(wdl, offset);
+            MODF = Chunk<ModfHeader>(wdl, offset);
+            MAOF = Chunk<MaofHeader>(wdl, offset);
 
             while(offset < wdl.size())
-                MARE_MAHO.append(Chunk(wdl, offset));
+                MARE_MAHO.append(BaseChunk(wdl, offset));
 
             wdl.close();
         }
@@ -55,7 +55,7 @@ namespace WoW
             file.write(MODF.getChunk());
             file.write(MAOF.getChunk());
 
-            for(const Chunk& chunk : MARE_MAHO)
+            for(const BaseChunk& chunk : MARE_MAHO)
                 file.write(chunk.getChunk());
 
             file.close();

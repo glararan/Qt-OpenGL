@@ -25,7 +25,6 @@ public:
         QString name;
 
         ColumnType type;
-
     };
 
     DbcSchema();

@@ -7,7 +7,8 @@ SOURCES += $$PWD/Application.cpp \
     $$PWD/World.cpp \
     $$PWD/ShaderManager.cpp \
     $$PWD/Shader.cpp \
-    $$PWD/SettingsManager.cpp
+    $$PWD/SettingsManager.cpp \
+    $$PWD/AsyncWorker.cpp
 
 HEADERS  += $$PWD/Application.h \
     $$PWD/GLObject.h \
@@ -21,6 +22,7 @@ HEADERS  += $$PWD/Application.h \
     $$PWD/World.h \
     $$PWD/ShaderManager.h \
     $$PWD/Shader.h \
-    $$PWD/SettingsManager.h
+    $$PWD/SettingsManager.h \
+    $$PWD/AsyncWorker.h
 
 INCLUDEPATH += $$PWD/../

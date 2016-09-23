@@ -1,6 +1,7 @@
 #include "WdtWizard.h"
 #include "ui_WdtWizard.h"
 
+#include "WdtWizardPage1.h"
 #include "WdtWizardPage2.h"
 
 #include <WoW/Common.h>
@@ -30,13 +31,14 @@ void WdtWizard::accept()
     // Get fields
     const QString mapName(field("mapName").toString());
     const QString wdtPath(field("wdtPath").toString());
+    const QString wdtFile(QString("%1/%2.wdt").arg(wdtPath).arg(mapName));
 
     adtBoolArray adtCoords(ui->page2->getAllCoords());
 
     WoW::Version version((WoW::Version)field("version").toInt());
 
     // Check for existing wdt.. if exists ask what to do
-    if(QFile::exists(wdtPath))
+    if(QFile::exists(wdtFile))
     {
         if(QMessageBox::question(Q_NULLPTR, "File already exists", "Do you want to replace file?", QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Cancel)
             return;
@@ -47,25 +49,22 @@ void WdtWizard::accept()
     WoW::ADT adt; // todo set version
 
     // Get only used coords from large array
-    QVector<QPoint> coords;
-
     for(int y = 0; y < MAP_SIZE; ++y)
     {
         for(int x = 0; x < MAP_SIZE; ++x)
         {
             if(adtCoords[x][y])
-                coords.append(QPoint(x, y));
+            {
+                wdt.setADT(WoW::WDT::MapExists, y, x); // Y & X are reversed
+                //adt.save(QString("%1/%2_%3_%4.adt").arg(wdtPath).arg(mapName).arg(x).arg(y));
+            }
         }
     }
 
-    // Use only used coords from large array
-    for(const QPoint& coord : coords)
-    {
-        wdt.setADT(1, coord.x(), coord.y());
-        adt.save(QString("%1/%2_%3_%4.adt").arg(wdtPath).arg(mapName).arg(coord.x()).arg(coord.y()));
-    }
-
-    wdt.save(QString("%1/%2.wdt").arg(wdtPath).arg(mapName));
+    wdt.setFlags(ui->page1->getFlags());
+    wdt.save(wdtFile);
 
     QDialog::accept();
+
+    qDebug() << "WdtWizard successfully created a new map";
 }

@@ -277,6 +277,14 @@ struct MphdHeader
     quint32 flags;
     quint32 unk1;
     quint32 unk2[6];
+
+    MphdHeader()
+    : flags(0)
+    , unk1(0)
+    {
+        for(qint8 i = 0; i < 6; ++i)
+            unk2[i] = 0;
+    }
 };
 
 struct MainHeader
@@ -285,7 +293,22 @@ struct MainHeader
     {
         quint32 exist;
         quint32 data1;
+
+        Data()
+        : exist(0)
+        , data1(0)
+        {
+        }
     } ADTs[MAP_SIZE][MAP_SIZE];
+
+    MainHeader()
+    {
+        for(qint8 x = 0; x < MAP_SIZE; ++x)
+        {
+            for(qint8 y = 0; y < MAP_SIZE; ++y)
+                ADTs[x][y] = Data();
+        }
+    }
 };
 
 #endif // CHUNKHEADERS_H
